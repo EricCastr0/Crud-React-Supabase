@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { supabase } from './conexao/conexao';
+import { AiOutlineDelete } from "react-icons/ai";
 import './App.css'
 
 const App = () => {
@@ -7,7 +8,7 @@ const App = () => {
   const [produtos, setProdutos]=useState([])
 
   const [prod, setProduto]=useState({
-    nome:'', preco:'', categoria:'', cod_interno:''
+    nome:'', preco:'', categoria:'', cod_interno:'',
   })
 
 
@@ -24,7 +25,7 @@ console.log(prod)
     const {data} = await supabase
     .from('Produtos')
     .select('*')
-    setProdutos(data)
+    setProdutos()
 
 
 
@@ -48,7 +49,28 @@ console.log(prod)
       categoria: prod.categoria,
       cod_interno: prod.cod_interno 
     })
+    setProduto({nome:'', preco:'', categoria:'', cod_interno:''});
+    await buscaProdutos();
+    
   }
+
+  async function deletarProduto(){
+  const { data, error } = await supabase
+  .from('Produtos')
+  .delete()
+  .remove('id', data)
+  await buscaProdutos();
+
+  if(error){
+    console.log(error)
+  }
+
+  if(data){
+    console.log(data)
+  }
+
+}
+
 
   return (
     <div>
@@ -59,6 +81,7 @@ console.log(prod)
           placeholder="Nome Produto"
           name='nome'
           onChange={handleChange}
+          value={prod.nome}
           />
 
         <input
@@ -67,6 +90,7 @@ console.log(prod)
           placeholder="Preço"
           name='preco'
           onChange={handleChange}
+          value={prod.preco}
           />
 
         <input
@@ -74,6 +98,7 @@ console.log(prod)
           placeholder="Categoria"
           name='categoria'
           onChange={handleChange}
+          value={prod.categoria}
         />
 
         <input
@@ -81,11 +106,13 @@ console.log(prod)
           placeholder="Cod. Interno"
           name='cod_interno'
           onChange={handleChange}
+          value={prod.cod_interno}
         />
 
 
 
-        <button type='submit'>Adicionar</button>
+
+        <button type='submit' onChange={deletarProduto} >Adicionar</button>
 
       </form>
 
@@ -97,6 +124,8 @@ console.log(prod)
             <th>Preço</th>
             <th>Categoria</th>
             <th>Cod. Interno</th>
+            <th></th>
+
           </tr>
         </thead>
         <tbody>
@@ -107,6 +136,7 @@ console.log(prod)
               <td>{data.preco}</td>
               <td>{data.categoria}</td>
               <td>{data.cod_interno}</td>
+              <td><button onClick={()=>{deletarProduto(data.id)}}> <AiOutlineDelete/></button></td>
             </tr>
         )}
         
