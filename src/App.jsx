@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { supabase } from './conexao/conexao';
-import { AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineDelete  } from "react-icons/ai";
+import { BiEditAlt } from "react-icons/bi";
 import './App.css'
 
 const App = () => {
@@ -25,7 +26,7 @@ console.log(prod)
     const {data} = await supabase
     .from('Produtos')
     .select('*')
-    setProdutos()
+    setProdutos(data)
 
 
 
@@ -54,11 +55,11 @@ console.log(prod)
     
   }
 
-  async function deletarProduto(){
+  async function deletarProduto(prodId){
   const { data, error } = await supabase
   .from('Produtos')
   .delete()
-  .remove('id', data)
+  .eq('id', prodId)
   await buscaProdutos();
 
   if(error){
@@ -136,7 +137,11 @@ console.log(prod)
               <td>{data.preco}</td>
               <td>{data.categoria}</td>
               <td>{data.cod_interno}</td>
-              <td><button onClick={()=>{deletarProduto(data.id)}}> <AiOutlineDelete/></button></td>
+              <td>
+                <button onClick={()=>{deletarProduto(data.id)}}> <AiOutlineDelete/></button> 
+                <button onClick={()=>{editarProduto(data.id)}}> <BiEditAlt/></button>
+              </td>
+            
             </tr>
         )}
         
